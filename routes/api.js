@@ -21,7 +21,7 @@ router.get('/products', function(req, res, next) {
         if(err) {
             res.json({'ERROR': err});
         } else {
-            res.json({'SUCCESS': products});
+            res.json(products);
         }
     });
 });

@@ -7,7 +7,26 @@ var server = require('../app');
 
 chai.use(chaiHttp);
 
+var Product = require('../models/product');
+
 describe('Products', function() {
+    Product.collection.drop();
+
+    beforeEach(function(done) {
+        var newProduct = new Product({
+            name: 'iPhoneTest'
+        });
+
+        newProduct.save(function(err) {
+            done();
+        });
+    });
+
+    afterEach(function(done) {
+        Product.collection.drop();
+        done();
+    });
+
     it('Should create a SINGLE product in /products POST', function(done) {
         chai.request(server)
             .post('/api/products')
@@ -33,9 +52,10 @@ describe('Products', function() {
                 should.exist(res);
                 res.should.have.status(200);
                 res.should.be.json;
-                res.body.should.be.a('object');
-                res.body.should.have.property('SUCCESS');
-                res.body.SUCCESS.should.have.a('array');
+                res.body.should.be.a('array');
+                res.body[0].should.have.property('_id');
+                res.body[0].should.have.property('name');
+                res.body[0].name.should.equal('iPhoneTest');
                 done();
             });
     });
